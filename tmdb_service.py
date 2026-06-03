@@ -218,4 +218,7 @@ async def get_similar(client: httpx.AsyncClient, media_type, id):
 
     data = response.json()
 
-    return [parse_result(item) for item in data.get("results", [])]
+    results = data.get("results", [])
+    for item in results:
+        item["media_type"] = media_type
+    return [parse_result(item) for item in results]
