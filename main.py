@@ -6,6 +6,7 @@ from tmdb_service import (
     get_media_details,
     get_trending_today,
     get_tmdb_popular,
+    get_similar,
 )
 from telegram_service import sync_tg_fetch_tmdb
 from models import MediaDetails, SearchResponse, MediaType, MediaResult
@@ -70,3 +71,9 @@ async def get_rp_rec(request: Request):
 @app.get("/popular", response_model=list[MediaResult])
 async def get_popular(request: Request):
     return await get_tmdb_popular(request.app.client)
+
+
+@app.get("/similar/{media_type}/{id}", response_model=list[MediaResult])
+async def get_similar_results(request: Request, media_type: MediaType, id: int):
+    """Get Similar TV/Movies"""
+    return await get_similar(request.app.client, media_type.value, id)

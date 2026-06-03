@@ -196,3 +196,26 @@ async def get_both_popular_results(client, url, params):
 
     data = response.json()
     return data
+
+
+# Get Similar TV/Movies
+
+
+async def get_similar(client: httpx.AsyncClient, media_type, id):
+    api_key = os.getenv("TMDB_API_KEY")
+    url = (
+        f"{os.getenv('TMDB_BASE_URL')}/{media_type}/{id}/similar"
+        f"?api_key={api_key}"
+        "&language=en-US"
+    )
+
+    try:
+        response = await client.get(url)
+        _verify_response(response)
+    except httpx.RequestError as e:
+        print(f"🚨 Network Error: {e}")
+        raise HTTPException(status_code=503, detail="Network Error!.")
+
+    data = response.json()
+
+    return [parse_result(item) for item in data.get("results", [])]
